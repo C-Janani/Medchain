@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Login page — a single prescription-pad card with role tabs.
+   Depends on tokens + base styles from style.css (loaded first).
+   ========================================================================== */
+
+.login-shell {
+  min-height: calc(100vh - 63px);
+  display: grid;
+  place-items: center;
+  padding: 48px 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 34px 32px 30px;
+  position: relative;
+  box-shadow: 0 24px 48px -28px rgba(16, 32, 43, 0.4);
+}
+
+.login-card::before {
+  content: "Rx";
+  position: absolute;
+  top: -16px;
+  left: 28px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  padding: 5px 12px;
+  border-radius: 3px;
+}
+
+.login-head { margin-bottom: 22px; }
+.login-head h1 {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.login-head p {
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.role-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+}
+
+.role-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.role-tab:hover { color: var(--ink); }
+
+.role-tab[aria-selected="true"] {
+  color: var(--rx-green-dark);
+  border-bottom-color: var(--rx-green);
+  font-weight: 600;
+}
+
+.field { margin-bottom: 16px; }
+
+.field label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 0.94rem;
+  color: var(--text);
+}
+
+.field input:focus {
+  outline: 2px solid var(--seal-gold);
+  outline-offset: 1px;
+  border-color: var(--seal-gold);
+}
+
+.field-error {
+  color: var(--alert);
+  font-size: 0.78rem;
+  margin-top: 5px;
+  display: none;
+}
+
+.field.has-error input { border-color: var(--alert); }
+.field.has-error .field-error { display: block; }
+
+.login-submit {
+  width: 100%;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.login-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.login-meta a {
+  color: var(--rx-green-dark);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-status {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  margin-bottom: 18px;
+  display: none;
+}
+
+.form-status.show { display: block; }
+.form-status.status-error {
+  background: #B14B3D14;
+  border: 1px dashed #B14B3D55;
+  color: var(--alert);
+}
+.form-status.status-success {
+  background: #1F6F5C14;
+  border: 1px dashed #1F6F5C55;
+  color: var(--rx-green-dark);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.back-link:hover { color: var(--ink); }

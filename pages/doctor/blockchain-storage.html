@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blockchain Ledger — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/doctor.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Doctor</span>
+    <ul class="dash-nav">
+      <li><a href="doctor-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="create-prescription.html"><span class="nav-icon">+</span>Create Prescription</a></li>
+      <li><a href="patient-records.html"><span class="nav-icon">☰</span>Patient Records</a></li>
+      <li><a href="ai-analysis.html"><span class="nav-icon">✦</span>AI Analysis</a></li>
+      <li><a href="blockchain-storage.html" class="active"><span class="nav-icon">◆</span>Blockchain Ledger</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Doctor</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Blockchain ledger</h1>
+        <p class="sub">Every block, chained to the one before it. Read-only.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>All blocks (oldest first)</h2></div>
+      <div class="block-list" id="blockList"></div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script>
+  const session = RxChain.requireRole("doctor", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  const blocks = RxChain.getAll().slice().reverse(); // chronological
+  const list = document.getElementById("blockList");
+
+  blocks.forEach((rx, i) => {
+    const div = document.createElement("div");
+    div.className = "block-item";
+    div.innerHTML = `
+      <span class="block-index">#${i + 1}</span>
+      <div>
+        <div class="block-hash">${rx.hash}</div>
+        <div class="block-meta">${rx.id} · ${rx.medication} for ${rx.patientName} · prev: <span class="mono">${rx.prevHash.slice(0, 14)}…</span></div>
+      </div>
+      <span class="badge ${RxChain.badgeClass(rx.status)}">${rx.status}</span>
+    `;
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

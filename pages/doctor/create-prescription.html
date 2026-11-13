@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Prescription — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/doctor.css">
+<link rel="stylesheet" href="../../css/features.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Doctor</span>
+    <ul class="dash-nav">
+      <li><a href="doctor-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="create-prescription.html" class="active"><span class="nav-icon">+</span>Create Prescription</a></li>
+      <li><a href="patient-records.html"><span class="nav-icon">☰</span>Patient Records</a></li>
+      <li><a href="ai-analysis.html"><span class="nav-icon">✦</span>AI Analysis</a></li>
+      <li><a href="blockchain-storage.html"><span class="nav-icon">◆</span>Blockchain Ledger</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Doctor</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Create prescription</h1>
+        <p class="sub">Medicines are checked against allergies, interactions and dosage limits as you type. The prescription is hashed and written to the ledger when you submit.</p>
+      </div>
+    </div>
+
+    <div class="panel" style="max-width:860px;">
+      <details id="newPatientBox">
+        <summary style="cursor:pointer;font-weight:600;">+ Register a new patient</summary>
+        <div class="form-grid" style="margin-top:14px;">
+          <div class="field"><label for="npName">Full name</label><input type="text" id="npName" placeholder="e.g. Ravi Kumar"></div>
+          <div class="field"><label for="npDob">Date of birth</label><input type="date" id="npDob"></div>
+          <div class="field"><label for="npPass">Login password (min 6)</label><input type="text" id="npPass" placeholder="Give this to the patient"></div>
+          <div class="field"><label for="npAllergies">Drug allergies (optional)</label><input type="text" id="npAllergies" placeholder="e.g. Penicillin, NSAIDs"></div>
+          <div class="field" style="align-self:end;"><button type="button" class="btn btn-outline" id="npBtn">Create patient</button></div>
+        </div>
+        <p id="npMsg" class="sub" style="margin:10px 0 0;"></p>
+      </details>
+    </div>
+
+    <div class="panel" style="max-width:860px;">
+      <div class="form-status" id="formStatus" style="display:none;"></div>
+      <form id="rxForm" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="patientId">Patient</label>
+            <select id="patientId" required><option value="">Loading patients…</option></select>
+          </div>
+          <div class="field">
+            <label for="patientName">Patient name</label>
+            <input type="text" id="patientName" placeholder="Filled automatically" readonly>
+          </div>
+        </div>
+
+        <div class="allergy-bar" id="allergyBar" style="display:none;">
+          <span class="allergy-label">Drug allergies:</span>
+          <span class="allergy-tags" id="allergyTags"></span>
+          <input type="text" id="allergyInput" placeholder="e.g. Penicillin, NSAIDs (separate with commas)" aria-label="Drug allergies">
+          <button type="button" class="btn btn-outline btn-sm" id="allergySave">Save allergies</button>
+        </div>
+
+        <div class="form-grid" style="margin-top:18px;">
+          <div class="field span-2">
+            <label for="diagnosis">Diagnosis</label>
+            <div class="field-with-mic">
+              <input type="text" id="diagnosis" placeholder="e.g. Fever, Hypertension, Throat infection" autocomplete="off">
+              <button type="button" class="mic-btn" data-dictate="diagnosis" title="Dictate" aria-label="Dictate diagnosis">🎤</button>
+            </div>
+            <div class="chip-row" id="suggestRow" style="margin-top:10px;"></div>
+            <div class="chip-row" id="myTemplates" style="margin-top:8px;"></div>
+            <p class="hint" id="templateHint" style="display:none;">Templates are starting points. Review every medicine before issuing.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:22px;">
+          <div class="panel-head" style="margin-bottom:10px;">
+            <h2 style="font-size:1rem;">Medicines</h2>
+            <button type="button" class="btn btn-outline btn-sm" id="addMedBtn">+ Add medicine</button>
+          </div>
+          <div class="med-list" id="medList"></div>
+          <datalist id="medNames"></datalist>
+        </div>
+
+        <div class="form-grid" style="margin-top:22px;">
+          <div class="field span-2">
+            <label for="notes">Notes for pharmacist / patient</label>
+            <div class="field-with-mic">
+              <textarea id="notes" placeholder="e.g. Take after food. Complete full course."></textarea>
+              <button type="button" class="mic-btn" data-dictate="notes" title="Dictate" aria-label="Dictate notes">🎤</button>
+            </div>
+            <p class="hint">
+              <span class="dictation-lang" id="dictationLang">Dictation language
+                <select id="dictLang" aria-label="Dictation language">
+                  <option value="en-IN">English (India)</option>
+                  <option value="ta-IN">Tamil</option>
+                </select>
+              </span>
+              <span id="dictHint"></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="safety-panel" id="safetyPanel" aria-live="polite">
+          <h3>Safety check <span class="ai-risk low" id="safetyRisk" style="display:none;margin:0;">Low risk</span></h3>
+          <div id="safetyBox"><p class="safety-wait">Add a medicine and select a patient to see allergy, interaction and dosage checks.</p></div>
+        </div>
+
+        <div class="ack-box" id="ackBox" style="display:none;">
+          <label>
+            <input type="checkbox" id="ackCheck">
+            <span>I have reviewed the serious warnings above and still want to issue this prescription. This decision will be recorded in the audit log.</span>
+          </label>
+        </div>
+
+        <div style="margin-top:22px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+          <button type="submit" class="btn btn-primary" id="submitBtn">Sign &amp; write to chain</button>
+          <a href="doctor-dashboard.html" class="btn btn-ghost">Cancel</a>
+          <span style="flex:1"></span>
+          <input type="text" id="tplName" placeholder="Template name" aria-label="Template name" style="padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius);font:inherit;font-size:0.86rem;background:#fff;">
+          <button type="button" class="btn btn-outline btn-sm" id="saveTplBtn">Save as template</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script src="../../js/doctor/patient-picker.js"></script>
+<script src="../../js/doctor/prescription.js"></script>
+</body>
+</html>

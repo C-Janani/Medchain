@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">Rx</span>
+      RxChain
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="login-shell">
+  <div class="login-card">
+    <a href="index.html" class="back-link">&larr; Back to home</a>
+
+    <div class="login-head">
+      <h1>Sign in</h1>
+      <p>Choose your role and enter your credentials.</p>
+    </div>
+
+    <div class="role-tabs" role="tablist" aria-label="Select role">
+      <button type="button" class="role-tab" data-role="doctor" role="tab">Doctor</button>
+      <button type="button" class="role-tab" data-role="patient" role="tab">Patient</button>
+      <button type="button" class="role-tab" data-role="pharmacy" role="tab">Pharmacy</button>
+      <button type="button" class="role-tab" data-role="admin" role="tab">Admin</button>
+    </div>
+
+    <div class="form-status" id="formStatus"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="field" id="idField">
+        <label for="userId">Registration ID</label>
+        <input type="text" id="userId" name="userId" placeholder="e.g. DOC-1024" autocomplete="username" required>
+        <span class="field-error">Please enter your registration ID.</span>
+      </div>
+
+      <div class="field" id="passField">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+        <span class="field-error">Please enter your password.</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary login-submit">Sign in as <span id="roleLabel">Doctor</span></button>
+    </form>
+
+    <div class="login-meta" style="flex-direction:column;gap:8px;align-items:flex-start;">
+      <span>No account? <a href="#" id="exploreDemo">Explore the demo without signing in</a> (<span id="demoRoleName">Doctor</span> view, fictional read-only data)</span>
+      <a href="index.html">Need help?</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/demo.js"></script>
+<script src="js/api.js"></script>
+<script src="js/login.js"></script>
+<script>
+  document.getElementById("exploreDemo").addEventListener("click", (e) => {
+    e.preventDefault();
+    const active = document.querySelector(".role-tab.active");
+    RxDemo.start(active ? active.dataset.role : "doctor");
+  });
+  document.querySelectorAll(".role-tab").forEach((t) => t.addEventListener("click", () => {
+    document.getElementById("demoRoleName").textContent = t.textContent;
+  }));
+</script>
+</body>
+</html>

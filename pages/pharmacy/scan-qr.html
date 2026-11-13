@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan QR — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/pharmacy.css">
+<script src="../../js/jsQR.js"></script>
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Pharmacy</span>
+    <ul class="dash-nav">
+      <li><a href="pharmacy-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="scan-qr.html" class="active"><span class="nav-icon">▦</span>Scan QR</a></li>
+      <li><a href="verify-prescription.html"><span class="nav-icon">✓</span>Verify Prescription</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Pharmacy</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Scan prescription QR</h1>
+        <p class="sub">Point the camera at the patient's QR code, or enter the ID manually.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="scan-panel">
+        <div>
+          <div class="scanner-frame" id="scannerFrame">
+            <span class="scan-placeholder" id="scanPlaceholder">Camera preview will appear here.<br><br>Select "Start camera" to begin.</span>
+            <video id="video" style="display:none;" playsinline></video>
+            <div class="scan-guide" style="display:none;" id="scanGuide"></div>
+          </div>
+          <div style="margin-top:14px; display:flex; gap:10px;">
+            <button class="btn btn-primary btn-sm" id="startCam">Start camera</button>
+            <button class="btn btn-ghost btn-sm" id="stopCam" style="display:none;">Stop camera</button>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-top:8px;" id="camNote"></p>
+        </div>
+
+        <div class="manual-entry">
+          <div class="field">
+            <label for="manualId">Or enter Prescription ID</label>
+            <input type="text" id="manualId" placeholder="e.g. RX-1001">
+          </div>
+          <button class="btn btn-outline" id="manualBtn">Look up prescription</button>
+          <div class="field" style="margin-top:6px;">
+            <label for="qrFile">Or upload a QR image</label>
+            <input type="file" id="qrFile" accept="image/*">
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin:0;" id="fileNote"></p>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Every QR code encodes a prescription ID and its chain hash — either works here.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<canvas id="hiddenCanvas" style="display:none;"></canvas>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script src="../../js/pharmacy/qr-scanner.js"></script>
+</body>
+</html>

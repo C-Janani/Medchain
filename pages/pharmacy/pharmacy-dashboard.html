@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmacy Dashboard — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/pharmacy.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Pharmacy</span>
+    <ul class="dash-nav">
+      <li><a href="pharmacy-dashboard.html" class="active"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="scan-qr.html"><span class="nav-icon">▦</span>Scan QR</a></li>
+      <li><a href="verify-prescription.html"><span class="nav-icon">✓</span>Verify Prescription</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Pharmacy</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Pharmacy overview</h1>
+        <p class="sub">Recent dispenses and what's waiting to be verified.</p>
+      </div>
+      <a href="scan-qr.html" class="btn btn-primary">+ Scan a prescription</a>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><span class="label">Total on ledger</span><span class="value" id="statTotal">0</span></div>
+      <div class="stat-card"><span class="label">Awaiting dispense</span><span class="value accent" id="statActive">0</span></div>
+      <div class="stat-card"><span class="label">Dispensed by us</span><span class="value" id="statDispensed">0</span></div>
+      <div class="stat-card"><span class="label">Revoked</span><span class="value" id="statRevoked">0</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Recently dispensed</h2></div>
+      <div class="table-wrap">
+        <table class="data-table" id="rxTable">
+          <thead><tr><th>ID</th><th>Patient</th><th>Medication</th><th>Dispensed</th><th>Status</th></tr></thead>
+          <tbody id="rxTableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">Nothing dispensed yet — scan a QR to get started.</div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script>
+  const session = RxChain.requireRole("pharmacy", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  const all = RxChain.getAll();
+  const active = all.filter((r) => r.status === "active");
+  const dispensedByUs = all.filter((r) => r.status === "dispensed" && r.dispensedBy === session.userId);
+  const dispensedAll = all.filter((r) => r.status === "dispensed");
+  const revoked = all.filter((r) => r.status === "revoked");
+
+  document.getElementById("statTotal").textContent = all.length;
+  document.getElementById("statActive").textContent = active.length;
+  document.getElementById("statDispensed").textContent = dispensedByUs.length;
+  document.getElementById("statRevoked").textContent = revoked.length;
+
+  const tbody = document.getElementById("rxTableBody");
+  const list = dispensedAll.slice(0, 8);
+  document.getElementById("emptyState").style.display = list.length ? "none" : "block";
+
+  list.forEach((rx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="mono">${rx.id}</td>
+      <td>${rx.patientName}</td>
+      <td>${rx.medication} · ${rx.dosage}</td>
+      <td>${RxChain.formatDate(rx.dispensedAt)}</td>
+      <td><span class="badge ${RxChain.badgeClass(rx.status)}">${rx.status}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+</script>
+</body>
+</html>

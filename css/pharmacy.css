@@ -1,0 +1,102 @@
+/* ==========================================================================
+   pharmacy.css — role accent (a trust-blue, distinct from doctor/patient) +
+   components used only on pharmacy pages: scanner frame, verification result.
+   Load order: style.css -> dashboard.css -> pharmacy.css
+   ========================================================================== */
+
+:root {
+  --pharmacy-blue: #2B5F82;
+  --pharmacy-blue-dark: #1F4863;
+  --accent: var(--pharmacy-blue);
+  --accent-dark: var(--pharmacy-blue-dark);
+}
+
+.scan-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.scanner-frame {
+  position: relative;
+  background: var(--ink);
+  border-radius: 10px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scanner-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanner-frame .scan-guide {
+  position: absolute;
+  inset: 14%;
+  border: 2px solid var(--pharmacy-blue);
+  border-radius: 12px;
+  box-shadow: 0 0 0 999px rgba(16, 32, 43, 0.45);
+}
+
+.scanner-frame .scan-placeholder {
+  color: #C7CDC5;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 20px;
+}
+
+.manual-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.verify-result {
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-top: 10px;
+  display: none;
+}
+
+.verify-result.show { display: block; }
+
+.verify-result.valid {
+  background: #1F6F5C10;
+  border: 1px solid #1F6F5C40;
+}
+
+.verify-result.invalid {
+  background: #B14B3D10;
+  border: 1px solid #B14B3D40;
+}
+
+.verify-result .vr-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.verify-result .vr-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #fff;
+}
+
+.verify-result.valid .vr-icon { background: var(--rx-green); }
+.verify-result.invalid .vr-icon { background: var(--alert); }
+
+@media (max-width: 760px) {
+  .scan-panel { grid-template-columns: 1fr; }
+}

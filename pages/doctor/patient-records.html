@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Records — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/doctor.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Doctor</span>
+    <ul class="dash-nav">
+      <li><a href="doctor-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="create-prescription.html"><span class="nav-icon">+</span>Create Prescription</a></li>
+      <li><a href="patient-records.html" class="active"><span class="nav-icon">☰</span>Patient Records</a></li>
+      <li><a href="ai-analysis.html"><span class="nav-icon">✦</span>AI Analysis</a></li>
+      <li><a href="blockchain-storage.html"><span class="nav-icon">◆</span>Blockchain Ledger</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Doctor</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Patient records</h1>
+        <p class="sub">All registered patients with their IDs, and every prescription you have issued.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Registered patients</h2></div>
+      <div class="filter-bar">
+        <input type="text" id="patientSearch" placeholder="Search patients by name or ID\u2026">
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Patient ID</th><th>Name</th><th>Date of birth</th><th>Allergies</th><th>My prescriptions</th><th></th></tr></thead>
+          <tbody id="patientBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="noPatients" style="display:none;">No patients registered yet. Register one from the Create prescription page.</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Prescriptions issued</h2></div>
+      <div class="filter-bar">
+        <input type="text" id="searchBox" placeholder="Search by patient name or ID…">
+        <select id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="active">Active</option>
+          <option value="dispensed">Dispensed</option>
+          <option value="revoked">Revoked</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="rxTable">
+          <thead>
+            <tr><th>ID</th><th>Patient</th><th>Patient ID</th><th>Medication</th><th>Issued</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="rxTableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">No matching records.</div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script>
+  const session = RxChain.requireRole("doctor", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  const all = RxChain.getAll();
+  const tbody = document.getElementById("rxTableBody");
+  const empty = document.getElementById("emptyState");
+  const search = document.getElementById("searchBox");
+  const statusFilter = document.getElementById("statusFilter");
+
+  function render() {
+    const q = search.value.trim().toLowerCase();
+    const s = statusFilter.value;
+    const rows = all.filter((rx) => {
+      const matchesQ = !q || rx.patientName.toLowerCase().includes(q) || rx.patientId.toLowerCase().includes(q);
+      const matchesS = !s || rx.status === s;
+      return matchesQ && matchesS;
+    });
+
+    tbody.innerHTML = "";
+    empty.style.display = rows.length ? "none" : "block";
+
+    rows.forEach((rx) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${rx.id}</td>
+        <td>${rx.patientName}</td>
+        <td class="mono">${rx.patientId}</td>
+        <td>${rx.medication} · ${rx.dosage}</td>
+        <td>${RxChain.formatDate(rx.createdAt)}</td>
+        <td><span class="badge ${RxChain.badgeClass(rx.status)}">${rx.status}</span></td>
+        <td><a href="ai-analysis.html?id=${rx.id}" class="btn btn-outline btn-sm">Analyze</a></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ---- Registered patients (IDs) ---- */
+  const esc = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const pBody = document.getElementById("patientBody");
+  const pEmpty = document.getElementById("noPatients");
+  const pSearch = document.getElementById("patientSearch");
+
+  function renderPatients() {
+    let list = [];
+    try {
+      list = RxChain.getPatients(pSearch.value.trim());
+    } catch (err) {
+      pEmpty.textContent = err.message;
+      pEmpty.style.display = "block";
+      return;
+    }
+    pEmpty.style.display = list.length ? "none" : "block";
+    pBody.innerHTML = list.map((p) => {
+      const count = all.filter((rx) => rx.patientId === p.registrationId).length;
+      return `<tr>
+        <td class="mono"><b>${esc(p.registrationId)}</b></td>
+        <td>${esc(p.name)}</td>
+        <td>${esc(p.dateOfBirth) || "\u2014"}</td>
+        <td>${(p.allergies || []).length ? esc(p.allergies.join(", ")) : "\u2014"}</td>
+        <td>${count}</td>
+        <td>
+          <button type="button" class="btn btn-outline btn-sm" data-copy="${esc(p.registrationId)}">Copy ID</button>
+          <a class="btn btn-primary btn-sm" href="create-prescription.html?patient=${encodeURIComponent(p.registrationId)}">Write prescription</a>
+        </td></tr>`;
+    }).join("");
+  }
+
+  pBody.addEventListener("click", (e) => {
+    const id = e.target.dataset && e.target.dataset.copy;
+    if (!id) return;
+    (navigator.clipboard ? navigator.clipboard.writeText(id) : Promise.reject())
+      .then(() => { e.target.textContent = "Copied"; })
+      .catch(() => { window.prompt("Copy the patient ID:", id); });
+  });
+  pSearch.addEventListener("input", renderPatients);
+  renderPatients();
+
+  search.addEventListener("input", render);
+  statusFilter.addEventListener("change", render);
+  render();
+</script>
+</body>
+</html>

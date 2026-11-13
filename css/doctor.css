@@ -1,0 +1,109 @@
+/* ==========================================================================
+   doctor.css — role accent (rx-green, already the default) + components
+   used only on doctor pages: AI report card, ledger/blockchain list.
+   Load order: style.css -> dashboard.css -> doctor.css
+   ========================================================================== */
+
+:root {
+  --accent: var(--rx-green);
+  --accent-dark: var(--rx-green-dark);
+}
+
+/* AI analysis / report */
+.ai-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.ai-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  border-top-color: var(--rx-green);
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.ai-report-card {
+  border-left: 3px solid var(--rx-green);
+  background: #1F6F5C0a;
+  padding: 18px 20px;
+  border-radius: 0 8px 8px 0;
+}
+
+.ai-report-card h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.ai-report-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.ai-report-card li { margin-bottom: 6px; }
+
+.ai-risk {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+.ai-risk.low { background: #1F6F5C14; color: var(--rx-green-dark); }
+.ai-risk.moderate { background: #C08A2E14; color: var(--seal-gold-dark); }
+.ai-risk.high { background: #B14B3D14; color: var(--alert); }
+
+/* Blockchain ledger list */
+.block-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.block-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.block-index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.block-hash {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--rx-green-dark);
+  overflow-wrap: anywhere;
+}
+
+.block-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}

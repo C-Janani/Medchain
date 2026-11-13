@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEDICAL BLOCKCHAIN — Blockchain Prescription System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">Rx</span>
+      MEDICAL BLOCKCHAIN
+    </a>
+    <ul class="nav-links">
+      <li><a href="#demo">Explore demo</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#roles">Roles</a></li>
+      <li><a href="#trust">Why blockchain</a></li>
+    </ul>
+    <a href="login.html" class="nav-cta">Sign in</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Tamper-evident prescriptions</span>
+      <h1>Every prescription, notarized the moment it's written.</h1>
+      <p class="lede">
+        RxChain gives doctors, patients, and pharmacies a shared, verifiable record
+        of every prescription — hashed and written to a blockchain the instant it's
+        issued, so nothing can be forged, altered, or filled twice.
+      </p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary">Explore Demo (no login)</a>
+        <a href="login.html" class="btn btn-ghost">Sign in to your dashboard</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
+      </div>
+    </div>
+
+    <div class="seal-card">
+      <div class="seal-row">
+        <div>
+          <span class="label">Patient</span>
+          <span class="value">Priya Sample</span>
+          <span class="label" style="margin-top:12px;">Medication</span>
+          <span class="value">Amoxicillin 500mg</span>
+        </div>
+        <div class="seal-stamp">
+          <span>Verified<br>on chain</span>
+        </div>
+      </div>
+      <hr class="perforation">
+      <span class="label">Block hash</span>
+      <div class="hash-line">0x8f3a9c1e...d47b2<span class="cursor"></span></div>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The ledger</span>
+      <h2>From prescription to pickup, in four recorded steps</h2>
+    </div>
+    <div class="ledger">
+      <div class="ledger-step">
+        <span class="num">01</span>
+        <h3>Doctor prescribes</h3>
+        <p>The doctor issues a prescription through their dashboard, with dosage, duration, and notes.</p>
+      </div>
+      <div class="ledger-step">
+        <span class="num">02</span>
+        <h3>Hashed to chain</h3>
+        <p>The record is hashed and written to the blockchain, generating a unique, tamper-evident ID.</p>
+      </div>
+      <div class="ledger-step">
+        <span class="num">03</span>
+        <h3>Patient reviews</h3>
+        <p>The patient views their prescription and QR code from their own dashboard, anytime.</p>
+      </div>
+      <div class="ledger-step">
+        <span class="num">04</span>
+        <h3>Pharmacy verifies</h3>
+        <p>The pharmacy scans the QR code, checks it against the chain, and dispenses safely.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="demo">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Public demo · no login needed</span>
+      <h2>Explore MedChain as any role</h2>
+    </div>
+    <p style="max-width:720px;margin:0 0 18px;">
+      The demo uses fictional people and sample prescriptions, is read-only, and never touches real
+      patient records. Try the drug-interaction and allergy checks, QR verification, English/Tamil explanations,
+      reminders, and the admin ledger-integrity and fraud panels.
+    </p>
+    <div class="roles-grid">
+      <a class="role-card" href="#" data-demo-role="doctor"><span class="role-tag">Doctor</span><h3>Explore as Doctor</h3><p>Prescriptions, live safety checks, templates, voice dictation.</p><span class="role-go">Open demo →</span></a>
+      <a class="role-card" href="#" data-demo-role="patient"><span class="role-tag">Patient</span><h3>Explore as Patient</h3><p>Prescriptions, QR codes, reminders, English/Tamil explanations.</p><span class="role-go">Open demo →</span></a>
+      <a class="role-card" href="#" data-demo-role="pharmacy"><span class="role-tag">Pharmacy</span><h3>Explore as Pharmacy</h3><p>Verify sample QR codes, including a forged one, against the chain.</p><span class="role-go">Open demo →</span></a>
+      <a class="role-card" href="#" data-demo-role="admin"><span class="role-tag">Admin</span><h3>Explore as Admin</h3><p>Ledger integrity check, tamper simulation, fraud and anomaly risk.</p><span class="role-go">Open demo →</span></a>
+    </div>
+    <p style="max-width:720px;margin:18px 0 0;font-size:.86rem;opacity:.8;">
+      Note: the ledger is a <strong>simulated blockchain</strong> (SHA-256 hash chaining stored in the database).
+      It is not a deployed public blockchain network.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="roles">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Sign in as</span>
+      <h2>One system, four vantage points</h2>
+    </div>
+    <div class="roles-grid">
+      <a class="role-card" href="login.html?role=doctor">
+        <span class="role-tag">Doctor</span>
+        <h3>Prescribe &amp; review</h3>
+        <p>Write prescriptions, review patient history, and read AI-assisted analysis.</p>
+        <span class="role-go">Sign in →</span>
+      </a>
+      <a class="role-card" href="login.html?role=patient">
+        <span class="role-tag">Patient</span>
+        <h3>View &amp; carry</h3>
+        <p>See your prescriptions and QR codes, and track what's active or filled.</p>
+        <span class="role-go">Sign in →</span>
+      </a>
+      <a class="role-card" href="login.html?role=pharmacy">
+        <span class="role-tag">Pharmacy</span>
+        <h3>Scan &amp; verify</h3>
+        <p>Scan a patient's QR code and confirm authenticity against the chain before dispensing.</p>
+        <span class="role-go">Sign in →</span>
+      </a>
+      <a class="role-card" href="login.html?role=admin">
+        <span class="role-tag">Admin</span>
+        <h3>Oversee the system</h3>
+        <p>Manage accounts and monitor the integrity of records across the network.</p>
+        <span class="role-go">Sign in →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="trust" id="trust">
+  <div class="wrap">
+    <div>
+      <h3>Immutable</h3>
+      <p>Once written to the chain, a prescription record can't be silently edited or deleted.</p>
+    </div>
+    <div>
+      <h3>Verifiable</h3>
+      <p>Anyone with the QR code can confirm a prescription is genuine, in seconds.</p>
+    </div>
+    <div>
+      <h3>Traceable</h3>
+      <p>Every issue, view, and dispense is timestamped and attributable.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="foot-note">RxChain — Blockchain Prescription System · Academic Project</span>
+    <span class="foot-note">Built with HTML · CSS · JS</span>
+  </div>
+</footer>
+
+<script src="js/demo.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.querySelectorAll("[data-demo-role]").forEach((el) =>
+    el.addEventListener("click", (e) => { e.preventDefault(); RxDemo.start(el.dataset.demoRole); }));
+</script>
+</body>
+</html>

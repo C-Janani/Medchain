@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/features.css">
+</head>
+<style>
+  :root { --accent: var(--ink); --accent-dark: #000; }
+</style>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge" style="color: var(--seal-gold);">Admin</span>
+    <ul class="dash-nav">
+      <li><a href="admin-dashboard.html" class="active"><span class="nav-icon">▤</span>Overview</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Admin</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>System overview</h1>
+        <p class="sub">Full visibility into the ledger, doctors, and pharmacies on the network.</p>
+      </div>
+    </div>
+
+    <div class="panel" id="integrityPanel">
+      <div class="panel-head">
+        <h2>Ledger integrity</h2>
+        <button type="button" class="btn btn-outline btn-sm" id="verifyBtn">Verify now</button>
+      </div>
+      <div class="integrity-banner checking" id="integrityBanner" role="status">
+        <span class="state-icon" id="integrityIcon">…</span>
+        <div><h3 id="integrityTitle">Checking the ledger…</h3><p id="integritySub">Re-hashing every block and comparing it with the prescription records.</p></div>
+      </div>
+      <div class="table-wrap" id="issueWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th>Issue</th><th>Where</th><th>What was found</th></tr></thead>
+          <tbody id="issueBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" id="fraudPanel">
+      <div class="panel-head"><h2>Fraud &amp; anomaly risk</h2></div>
+      <div class="risk-top">
+        <div class="risk-score low" id="riskScore"><span class="num" id="riskNum">—</span><span class="lbl" id="riskLevel">checking</span></div>
+        <div>
+          <div class="risk-meter low" id="riskMeter"><span style="width:0%"></span></div>
+          <p class="risk-explainer" id="riskExplain">Scores come from unusual prescribing volume, the same medicine from several doctors, repeated failed verifications and ledger tampering. They are signals to review, not proof of wrongdoing.</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:1rem; margin-bottom:10px;">Flags</h3>
+      <ul class="flag-list" id="flagList"></ul>
+      <div class="empty-state" id="noFlags" style="display:none; padding:20px;">No unusual activity detected.</div>
+
+      <h3 style="font-size:1rem; margin:22px 0 10px;">Risk by person</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Flags</th><th>Score</th></tr></thead>
+          <tbody id="entityBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><span class="label">Total prescriptions</span><span class="value" id="statTotal">0</span></div>
+      <div class="stat-card"><span class="label">Active</span><span class="value" id="statActive">0</span></div>
+      <div class="stat-card"><span class="label">Dispensed</span><span class="value" id="statDispensed">0</span></div>
+      <div class="stat-card"><span class="label">Revoked</span><span class="value" id="statRevoked">0</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Register a user</h2></div>
+      <div class="form-grid">
+        <div class="field"><label for="auRole">Role</label>
+          <select id="auRole"><option value="doctor">Doctor</option><option value="patient">Patient</option><option value="pharmacy">Pharmacy</option><option value="admin">Admin</option></select></div>
+        <div class="field"><label for="auName">Full name</label><input type="text" id="auName"></div>
+        <div class="field"><label for="auLic">Licence number (doctor / pharmacy)</label><input type="text" id="auLic"></div>
+        <div class="field"><label for="auSpec">Specialization (doctor)</label><input type="text" id="auSpec"></div>
+        <div class="field"><label for="auPass">Password (min 6)</label><input type="text" id="auPass"></div>
+        <div class="field" style="align-self:end;"><button type="button" class="btn btn-primary" id="auBtn">Create user</button></div>
+      </div>
+      <p id="auMsg" class="sub" style="margin:10px 0 0;"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Registered doctors</h2></div>
+      <div class="table-wrap">
+        <table class="data-table" id="docTable">
+          <thead><tr><th>Doctor ID</th><th>Name</th><th>Prescriptions issued</th></tr></thead>
+          <tbody id="docTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Full ledger</h2>
+        <div class="filter-bar" style="margin:0;">
+          <input type="text" id="searchBox" placeholder="Search ID, patient, or doctor…">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="rxTable">
+          <thead><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Medication</th><th>Issued</th><th>Status</th><th>Hash</th></tr></thead>
+          <tbody id="rxTableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">No matching records.</div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script src="../../js/admin-users.js"></script>
+<script src="../../js/admin-security.js"></script>
+<script>
+  const session = RxChain.requireRole("admin", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  const all = RxChain.getAll();
+
+  document.getElementById("statTotal").textContent = all.length;
+  document.getElementById("statActive").textContent = all.filter((r) => r.status === "active").length;
+  document.getElementById("statDispensed").textContent = all.filter((r) => r.status === "dispensed").length;
+  document.getElementById("statRevoked").textContent = all.filter((r) => r.status === "revoked").length;
+
+  // Doctors summary
+  const docMap = {};
+  all.forEach((rx) => {
+    if (!docMap[rx.doctorId]) docMap[rx.doctorId] = { name: rx.doctorName, count: 0 };
+    docMap[rx.doctorId].count++;
+  });
+  const docBody = document.getElementById("docTableBody");
+  Object.entries(docMap).forEach(([id, d]) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td class="mono">${id}</td><td>${d.name}</td><td>${d.count}</td>`;
+    docBody.appendChild(tr);
+  });
+  if (!Object.keys(docMap).length) {
+    docBody.innerHTML = `<tr><td colspan="3" class="empty-state">No doctors on the ledger yet.</td></tr>`;
+  }
+
+  // Ledger table with search
+  const tbody = document.getElementById("rxTableBody");
+  const empty = document.getElementById("emptyState");
+  const search = document.getElementById("searchBox");
+
+  function render() {
+    const q = search.value.trim().toLowerCase();
+    const rows = all.filter((rx) =>
+      !q ||
+      rx.id.toLowerCase().includes(q) ||
+      rx.patientName.toLowerCase().includes(q) ||
+      rx.doctorName.toLowerCase().includes(q)
+    );
+
+    tbody.innerHTML = "";
+    empty.style.display = rows.length ? "none" : "block";
+
+    rows.forEach((rx) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${rx.id}</td>
+        <td>${rx.patientName}</td>
+        <td>${rx.doctorName}</td>
+        <td>${rx.medication} · ${rx.dosage}</td>
+        <td>${RxChain.formatDate(rx.createdAt)}</td>
+        <td><span class="badge ${RxChain.badgeClass(rx.status)}">${rx.status}</span></td>
+        <td class="mono" style="font-size:0.76rem;">${rx.hash.slice(0, 14)}…</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  search.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>

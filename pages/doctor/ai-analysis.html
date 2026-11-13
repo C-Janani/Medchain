@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Analysis — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/doctor.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Doctor</span>
+    <ul class="dash-nav">
+      <li><a href="doctor-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="create-prescription.html"><span class="nav-icon">+</span>Create Prescription</a></li>
+      <li><a href="patient-records.html"><span class="nav-icon">☰</span>Patient Records</a></li>
+      <li><a href="ai-analysis.html" class="active"><span class="nav-icon">✦</span>AI Analysis</a></li>
+      <li><a href="blockchain-storage.html"><span class="nav-icon">◆</span>Blockchain Ledger</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Doctor</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>AI analysis</h1>
+        <p class="sub">Run an interaction &amp; risk check against the patient's prescription history.</p>
+      </div>
+    </div>
+
+    <div class="panel" style="max-width:640px;">
+      <div class="field" style="margin-bottom:18px;">
+        <label for="rxSelect">Select prescription</label>
+        <select id="rxSelect"></select>
+      </div>
+      <button id="runBtn" class="btn btn-primary">Run AI analysis</button>
+
+      <div class="ai-status" id="aiStatus" style="display:none; margin-top:20px;">
+        <span class="ai-spinner"></span>
+        <span>Checking allergies, interactions, dosage and history…</span>
+      </div>
+
+      <div id="resultWrap" style="margin-top:20px; display:none;">
+        <div class="ai-report-card">
+          <span class="ai-risk" id="riskTag">Low risk</span>
+          <h3>Summary</h3>
+          <p id="summaryText" style="color:var(--text); font-size:0.92rem; margin:0 0 12px;"></p>
+          <ul id="findingsList"></ul>
+        </div>
+        <a href="#" id="viewReportLink" class="btn btn-outline btn-sm" style="margin-top:16px;">Open full report →</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script>
+  const session = RxChain.requireRole("doctor", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  const all = RxChain.getAll();
+  const select = document.getElementById("rxSelect");
+  all.forEach((rx) => {
+    const opt = document.createElement("option");
+    opt.value = rx.id;
+    opt.textContent = `${rx.id} — ${rx.patientName} — ${rx.medication}`;
+    select.appendChild(opt);
+  });
+
+  const preselect = new URLSearchParams(window.location.search).get("id");
+  if (preselect) select.value = preselect;
+
+  function renderReport(report) {
+    document.getElementById("aiStatus").style.display = "none";
+    document.getElementById("resultWrap").style.display = "block";
+
+    const tag = document.getElementById("riskTag");
+    tag.textContent = report.risk.charAt(0).toUpperCase() + report.risk.slice(1) + " risk";
+    tag.className = "ai-risk " + report.risk;
+
+    document.getElementById("summaryText").textContent = report.summary;
+
+    const list = document.getElementById("findingsList");
+    list.innerHTML = "";
+    report.findings.forEach((f) => {
+      const li = document.createElement("li");
+      li.textContent = f;
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("runBtn").addEventListener("click", async () => {
+    const id = select.value;
+    if (!id) return;
+
+    const btn = document.getElementById("runBtn");
+    btn.disabled = true;
+    document.getElementById("aiStatus").style.display = "flex";
+    document.getElementById("resultWrap").style.display = "none";
+
+    try {
+      // Real check on the server: allergies, interactions, duplicates, dosage, history.
+      const report = await RxChain.analyse(id);
+      RxChain.attachAiReport(id, report);
+      renderReport(report);
+      document.getElementById("viewReportLink").href = `ai-report.html?id=${id}`;
+    } catch (err) {
+      document.getElementById("aiStatus").style.display = "none";
+      alert(err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

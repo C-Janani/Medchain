@@ -1,0 +1,36 @@
+{
+  "name": "rxchain-backend",
+  "version": "1.0.0",
+  "description": "RxChain Blockchain Medical Prescription System Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "seed": "node scripts/seed.js",
+    "tamper": "node scripts/simulate-tamper.js",
+    "tamper:restore": "node scripts/simulate-tamper.js --restore",
+    "test": "node tests/run-all.js",
+    "test:demo": "node tests/demo.test.js"
+  },
+  "keywords": [
+    "blockchain",
+    "medical",
+    "prescription",
+    "mongodb"
+  ],
+  "author": "RxChain",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.0",
+    "qrcode": "^1.5.4"
+  }
+}

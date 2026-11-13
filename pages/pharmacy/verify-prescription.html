@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Prescription — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/pharmacy.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Pharmacy</span>
+    <ul class="dash-nav">
+      <li><a href="pharmacy-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="scan-qr.html"><span class="nav-icon">▦</span>Scan QR</a></li>
+      <li><a href="verify-prescription.html" class="active"><span class="nav-icon">✓</span>Verify Prescription</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Pharmacy</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Verify prescription</h1>
+        <p class="sub" id="rxSub">Checking against the chain…</p>
+      </div>
+      <a href="scan-qr.html" class="btn btn-ghost">← Scan another</a>
+    </div>
+
+    <div class="panel" style="max-width:640px;">
+      <div class="verify-result" id="verifyBox">
+        <div class="vr-head">
+          <span class="vr-icon" id="vrIcon">?</span>
+          <span id="vrTitle">Checking…</span>
+        </div>
+        <div class="rx-detail-grid" id="detailGrid" style="display:none;">
+          <div class="item"><span class="label">Patient</span><span class="value" id="dPatient">—</span></div>
+          <div class="item"><span class="label">Medication</span><span class="value" id="dMed">—</span></div>
+          <div class="item"><span class="label">Dosage</span><span class="value" id="dDosage">—</span></div>
+          <div class="item"><span class="label">Prescribed by</span><span class="value" id="dDoctor">—</span></div>
+          <div class="item"><span class="label">Issued</span><span class="value" id="dDate">—</span></div>
+          <div class="item"><span class="label">Status</span><span class="value" id="dStatus">—</span></div>
+        </div>
+        <p id="vrDetail" style="margin:12px 0 0; font-size:0.88rem;"></p>
+      </div>
+
+      <div id="actionWrap" style="margin-top:20px; display:none;">
+        <button class="btn btn-primary" id="dispenseBtn">Confirm &amp; dispense</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script src="../../js/pharmacy/verification.js"></script>
+</body>
+</html>

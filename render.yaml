@@ -1,0 +1,22 @@
+# One Render Web Service serves the front-end AND the API from a single URL.
+services:
+  - type: web
+    name: medchain
+    runtime: node
+    rootDir: rxchain-backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_REGISTRATION_ID
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: APP_TZ
+        value: Asia/Kolkata

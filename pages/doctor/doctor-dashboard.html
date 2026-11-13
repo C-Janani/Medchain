@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Doctor Dashboard — RxChain</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/doctor.css">
+</head>
+
+<body class="dash-body">
+
+<div class="dash-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+
+    <a href="../../index.html" class="dash-brand">
+      <span class="brand-mark">Rx</span>
+      RxChain
+    </a>
+
+    <span class="dash-role-badge">Doctor</span>
+
+    <ul class="dash-nav">
+
+      <li>
+        <a href="doctor-dashboard.html" class="active">
+          <span class="nav-icon">▤</span>
+          Dashboard
+        </a>
+      </li>
+
+      <li>
+        <a href="create-prescription.html">
+          <span class="nav-icon">+</span>
+          Create Prescription
+        </a>
+      </li>
+
+      <li>
+        <a href="patient-records.html">
+          <span class="nav-icon">☰</span>
+          Patient Records
+        </a>
+      </li>
+
+      <li>
+        <a href="ai-analysis.html">
+          <span class="nav-icon">✦</span>
+          AI Analysis
+        </a>
+      </li>
+
+      <li>
+        <a href="blockchain-storage.html">
+          <span class="nav-icon">◆</span>
+          Blockchain Ledger
+        </a>
+      </li>
+
+    </ul>
+
+    <!-- SIDEBAR USER -->
+    <div class="dash-sidebar-footer">
+
+      <div class="dash-user">
+        <span class="u-name" id="sbUserName">—</span>
+        <span class="u-role">Doctor</span>
+      </div>
+
+      <a href="#" class="dash-signout" id="signOutBtn">
+        Sign out
+      </a>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- TOPBAR -->
+    <div class="dash-topbar">
+
+      <div>
+        <h1>Good to see you, Doctor.</h1>
+
+        <p class="sub">
+          Here's what's happening across your prescriptions today.
+        </p>
+      </div>
+
+      <a href="create-prescription.html" class="btn btn-primary">
+        + New prescription
+      </a>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+    <div class="stat-grid">
+
+      <div class="stat-card">
+        <span class="label">Total issued</span>
+        <span class="value" id="statTotal">0</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="label">Active</span>
+        <span class="value accent" id="statActive">0</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="label">Dispensed</span>
+        <span class="value" id="statDispensed">0</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="label">Patients seen</span>
+        <span class="value" id="statPatients">0</span>
+      </div>
+
+    </div>
+
+
+    <!-- RECENT PRESCRIPTIONS -->
+    <div class="panel">
+
+      <div class="panel-head">
+
+        <h2>Recent prescriptions</h2>
+
+        <a href="patient-records.html"
+           class="btn btn-outline btn-sm">
+          View all patients
+        </a>
+
+      </div>
+
+
+      <div class="table-wrap">
+
+        <table class="data-table" id="rxTable">
+
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Patient</th>
+              <th>Medication</th>
+              <th>Issued</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+
+          </thead>
+
+          <tbody id="rxTableBody"></tbody>
+
+        </table>
+
+      </div>
+
+
+      <div class="empty-state"
+           id="emptyState"
+           style="display:none;">
+
+        No prescriptions yet — create your first one.
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- API CONNECTION -->
+<script src="../../js/demo.js"></script>
+<script src="../../js/api.js"></script>
+
+
+<!-- DOCTOR DASHBOARD LOGIC -->
+<script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  try {
+
+    // Check logged-in doctor
+    const user = Auth.requireRole("doctor");
+
+    // Show doctor name
+    document.getElementById("sbUserName").textContent =
+      user.name || user.registrationId;
+
+
+    // SIGN OUT
+    document
+      .getElementById("signOutBtn")
+      .addEventListener("click", (event) => {
+
+        event.preventDefault();
+
+        Auth.logout();
+
+      });
+
+
+    // Get doctor's prescriptions from MongoDB
+    const data = await api("/prescriptions/doctor");
+
+    const prescriptions =
+      data.prescriptions || data.data || [];
+
+
+    // Statistics
+    const total = prescriptions.length;
+
+    const active = prescriptions.filter(
+      prescription => prescription.status === "active"
+    ).length;
+
+    const dispensed = prescriptions.filter(
+      prescription => prescription.status === "dispensed"
+    ).length;
+
+
+    // Count unique patients
+    const patientIds = new Set(
+      prescriptions.map(
+        prescription =>
+          prescription.patient?._id ||
+          prescription.patient?.registrationId ||
+          prescription.patient
+      )
+    );
+
+    const patients = patientIds.size;
+
+
+    // Update statistics
+    document.getElementById("statTotal").textContent = total;
+
+    document.getElementById("statActive").textContent = active;
+
+    document.getElementById("statDispensed").textContent = dispensed;
+
+    document.getElementById("statPatients").textContent = patients;
+
+
+    // Table
+    const tbody =
+      document.getElementById("rxTableBody");
+
+    const emptyState =
+      document.getElementById("emptyState");
+
+
+    if (prescriptions.length === 0) {
+
+      emptyState.style.display = "block";
+
+      return;
+
+    }
+
+
+    // Show latest 8 prescriptions
+    prescriptions
+      .slice(0, 8)
+      .forEach((rx) => {
+
+        const tr =
+          document.createElement("tr");
+
+
+        // Patient name
+        const patientName =
+          rx.patient?.name ||
+          rx.patient?.registrationId ||
+          "Unknown";
+
+
+        // Medicines
+        const medicines =
+          Array.isArray(rx.medicines)
+            ? rx.medicines
+            : [];
+
+
+        const medicationText =
+          medicines.length > 0
+            ? medicines
+                .map(medicine => medicine.name)
+                .join(", ")
+            : "—";
+
+
+        // Date
+        const issuedDate =
+          rx.createdAt
+            ? new Date(rx.createdAt).toLocaleDateString()
+            : "—";
+
+
+        // Status
+        const status =
+          rx.status || "active";
+
+
+        tr.innerHTML = `
+
+          <td class="mono">
+            ${rx.prescriptionId || "—"}
+          </td>
+
+          <td>
+            ${patientName}
+          </td>
+
+          <td>
+            ${medicationText}
+          </td>
+
+          <td>
+            ${issuedDate}
+          </td>
+
+          <td>
+            <span class="badge ${getBadgeClass(status)}">
+              ${status}
+            </span>
+          </td>
+
+          <td>
+            ${
+              rx.prescriptionId
+                ? `<a
+                     href="qr-generation.html?id=${encodeURIComponent(rx.prescriptionId)}"
+                     class="btn btn-outline btn-sm">
+                     QR
+                   </a>`
+                : ""
+            }
+          </td>
+
+        `;
+
+
+        tbody.appendChild(tr);
+
+      });
+
+
+  } catch (error) {
+
+    console.error("Doctor dashboard error:", error);
+
+    document.getElementById("emptyState").style.display =
+      "block";
+
+    document.getElementById("emptyState").textContent =
+      error.message || "Unable to load prescriptions.";
+
+  }
+
+});
+
+
+// Status badge helper
+function getBadgeClass(status) {
+
+  if (status === "active") {
+    return "badge-active";
+  }
+
+  if (status === "dispensed") {
+    return "badge-dispensed";
+  }
+
+  if (status === "cancelled") {
+    return "badge-cancelled";
+  }
+
+  return "";
+
+}
+
+</script>
+
+</body>
+</html>

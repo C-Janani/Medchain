@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My QR Code — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/patient.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Patient</span>
+    <ul class="dash-nav">
+      <li><a href="patient-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="my-prescriptions.html"><span class="nav-icon">☰</span>My Prescriptions</a></li>
+      <li><a href="reminders.html"><span class="nav-icon">◷</span>Reminders</a></li>
+      <li><a href="qr-code.html" class="active"><span class="nav-icon">▦</span>My QR Code</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Patient</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Your QR code</h1>
+        <p class="sub">Show this at the pharmacy so they can verify and dispense.</p>
+      </div>
+    </div>
+
+    <div class="panel" id="panelWrap" style="max-width:420px; display:none;">
+      <div class="field" style="margin-bottom:18px;" id="pickerWrap">
+        <label for="rxPicker">Which prescription?</label>
+        <select id="rxPicker"></select>
+      </div>
+      <div class="qr-box">
+        <div id="qrcode"></div>
+        <span class="qr-caption" id="qrCaption">—</span>
+      </div>
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display:none;">You have no prescriptions to show yet.</div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script>
+  const session = RxChain.requireRole("patient", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  let mine = RxChain.getByPatient(session.userId);
+  if (!mine.length) mine = RxChain.getByPatient("PAT-2048");
+
+  if (!mine.length) {
+    document.getElementById("emptyState").style.display = "block";
+  } else {
+    document.getElementById("panelWrap").style.display = "block";
+    const picker = document.getElementById("rxPicker");
+    mine.forEach((rx) => {
+      const opt = document.createElement("option");
+      opt.value = rx.id;
+      opt.textContent = `${rx.id} — ${rx.medication} (${rx.status})`;
+      picker.appendChild(opt);
+    });
+
+    const preselect = new URLSearchParams(window.location.search).get("id");
+    if (preselect) picker.value = preselect;
+
+    let qrInstance = null;
+
+    function draw() {
+      const rx = RxChain.getById(picker.value);
+      if (!rx) return;
+      document.getElementById("qrCaption").textContent = `${rx.id} · ${rx.medication}`;
+      const container = document.getElementById("qrcode");
+      container.innerHTML = "";
+      const payload = JSON.stringify({ id: rx.id, hash: rx.hash, token: rx.qrToken });
+      if (window.QRCode) {
+        new QRCode(container, { text: payload, width: 180, height: 180, colorDark: "#10202B", colorLight: "#ffffff" });
+      } else {
+        container.textContent = payload;
+      }
+    }
+
+    picker.addEventListener("change", draw);
+    draw();
+  }
+</script>
+</body>
+</html>

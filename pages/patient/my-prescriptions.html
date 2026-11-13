@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Prescriptions — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/patient.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Patient</span>
+    <ul class="dash-nav">
+      <li><a href="patient-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="my-prescriptions.html" class="active"><span class="nav-icon">☰</span>My Prescriptions</a></li>
+      <li><a href="reminders.html"><span class="nav-icon">◷</span>Reminders</a></li>
+      <li><a href="qr-code.html"><span class="nav-icon">▦</span>My QR Code</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Patient</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>My prescriptions</h1>
+        <p class="sub">Your full history, active and past.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="filter-bar">
+        <select id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="active">Active</option>
+          <option value="dispensed">Dispensed</option>
+          <option value="revoked">Revoked</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="rxTable">
+          <thead><tr><th>ID</th><th>Medication</th><th>Doctor</th><th>Issued</th><th>Status</th><th></th></tr></thead>
+          <tbody id="rxTableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">No prescriptions found.</div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script>
+  const session = RxChain.requireRole("patient", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  let mine = RxChain.getByPatient(session.userId);
+  if (!mine.length) mine = RxChain.getByPatient("PAT-2048");
+
+  const tbody = document.getElementById("rxTableBody");
+  const empty = document.getElementById("emptyState");
+  const statusFilter = document.getElementById("statusFilter");
+
+  function render() {
+    const s = statusFilter.value;
+    const rows = mine.filter((rx) => !s || rx.status === s);
+    tbody.innerHTML = "";
+    empty.style.display = rows.length ? "none" : "block";
+
+    rows.forEach((rx) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${rx.id}</td>
+        <td>${rx.medication} · ${rx.dosage}</td>
+        <td>${rx.doctorName}</td>
+        <td>${RxChain.formatDate(rx.createdAt)}</td>
+        <td><span class="badge ${RxChain.badgeClass(rx.status)}">${rx.status}</span></td>
+        <td><a href="view-prescription.html?id=${rx.id}" class="btn btn-outline btn-sm">View</a></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  statusFilter.addEventListener("change", render);
+  render();
+</script>
+</body>
+</html>

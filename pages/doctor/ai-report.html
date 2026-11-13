@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Report — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/doctor.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Doctor</span>
+    <ul class="dash-nav">
+      <li><a href="doctor-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="create-prescription.html"><span class="nav-icon">+</span>Create Prescription</a></li>
+      <li><a href="patient-records.html"><span class="nav-icon">☰</span>Patient Records</a></li>
+      <li><a href="ai-analysis.html" class="active"><span class="nav-icon">✦</span>AI Analysis</a></li>
+      <li><a href="blockchain-storage.html"><span class="nav-icon">◆</span>Blockchain Ledger</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Doctor</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>AI report</h1>
+        <p class="sub" id="rxSub">—</p>
+      </div>
+      <a href="ai-analysis.html" class="btn btn-ghost">← Run another</a>
+    </div>
+
+    <div class="panel" id="panelWrap" style="max-width:680px; display:none;">
+      <span class="ai-risk" id="riskTag">Low risk</span>
+      <h2 style="margin-bottom:14px;">Summary</h2>
+      <p id="summaryText" style="margin-bottom:20px;"></p>
+      <h3 style="font-size:1rem; margin-bottom:10px;">Findings</h3>
+      <ul id="findingsList" style="margin:0 0 20px 18px; padding:0; font-size:0.92rem;"></ul>
+      <span class="qr-caption mono" id="generatedAt" style="color:var(--text-muted); font-size:0.78rem;"></span>
+    </div>
+
+    <div class="empty-state" id="noReport" style="display:none;">
+      No AI report yet for this prescription. <a href="ai-analysis.html">Run an analysis</a> first.
+    </div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script>
+  const session = RxChain.requireRole("doctor", "../../login.html");
+  document.getElementById("sbUserName").textContent = session.userId;
+  document.getElementById("signOutBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    RxChain.signOut("../../login.html");
+  });
+
+  const id = new URLSearchParams(window.location.search).get("id");
+  const rx = id ? RxChain.getById(id) : null;
+
+  if (rx) document.getElementById("rxSub").textContent = `${rx.id} — ${rx.patientName} — ${rx.medication}`;
+
+  if (!rx || !rx.aiReport) {
+    document.getElementById("noReport").style.display = "block";
+  } else {
+    const report = rx.aiReport;
+    document.getElementById("panelWrap").style.display = "block";
+
+    const tag = document.getElementById("riskTag");
+    tag.textContent = report.risk.charAt(0).toUpperCase() + report.risk.slice(1) + " risk";
+    tag.className = "ai-risk " + report.risk;
+
+    document.getElementById("summaryText").textContent = report.summary;
+
+    const list = document.getElementById("findingsList");
+    report.findings.forEach((f) => {
+      const li = document.createElement("li");
+      li.textContent = f;
+      list.appendChild(li);
+    });
+
+    document.getElementById("generatedAt").textContent = "Generated " + RxChain.formatDate(report.generatedAt);
+  }
+</script>
+</body>
+</html>

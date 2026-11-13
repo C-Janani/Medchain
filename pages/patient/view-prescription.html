@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prescription Detail — RxChain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="../../css/dashboard.css">
+<link rel="stylesheet" href="../../css/patient.css">
+<link rel="stylesheet" href="../../css/features.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="../../index.html" class="dash-brand"><span class="brand-mark">Rx</span>RxChain</a>
+    <span class="dash-role-badge">Patient</span>
+    <ul class="dash-nav">
+      <li><a href="patient-dashboard.html"><span class="nav-icon">▤</span>Dashboard</a></li>
+      <li><a href="my-prescriptions.html" class="active"><span class="nav-icon">☰</span>My Prescriptions</a></li>
+      <li><a href="reminders.html"><span class="nav-icon">◷</span>Reminders</a></li>
+      <li><a href="qr-code.html"><span class="nav-icon">▦</span>My QR Code</a></li>
+    </ul>
+    <div class="dash-sidebar-footer">
+      <div class="dash-user"><span class="u-name" id="sbUserName">—</span><span class="u-role">Patient</span></div>
+      <a href="#" class="dash-signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1>Prescription detail</h1>
+        <p class="sub" id="rxSub">—</p>
+      </div>
+      <a href="my-prescriptions.html" class="btn btn-ghost">← Back to list</a>
+    </div>
+
+    <div class="panel" id="panelWrap" style="max-width:640px; display:none;">
+      <span class="badge" id="statusBadge"></span>
+      <div class="rx-detail-grid" style="margin-top:18px;">
+        <div class="item"><span class="label">Medication</span><span class="value" id="dMed">—</span></div>
+        <div class="item"><span class="label">Dosage</span><span class="value" id="dDosage">—</span></div>
+        <div class="item"><span class="label">Frequency</span><span class="value" id="dFreq">—</span></div>
+        <div class="item"><span class="label">Duration</span><span class="value" id="dDur">—</span></div>
+        <div class="item"><span class="label">Prescribed by</span><span class="value" id="dDoctor">—</span></div>
+        <div class="item"><span class="label">Issued</span><span class="value" id="dDate">—</span></div>
+      </div>
+      <div class="item" style="margin-bottom:18px;">
+        <span class="label">Notes</span>
+        <span class="value" id="dNotes" style="font-weight:400;">—</span>
+      </div>
+      <hr class="perforation">
+      <span class="qr-caption mono" id="dHash" style="color:var(--text-muted);"></span>
+
+      <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
+        <a href="#" id="qrLink" class="btn btn-primary btn-sm">View QR code</a>
+        <a href="#" id="aiLink" class="btn btn-outline btn-sm" style="display:none;">View AI report</a>
+      </div>
+    </div>
+
+    <div class="panel" id="explainPanel" style="max-width:640px; display:none;">
+      <div class="explain-head">
+        <h2 style="margin:0;" id="explainTitle">In simple words</h2>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">English</button>
+          <button type="button" data-lang="ta" aria-pressed="false" lang="ta">தமிழ்</button>
+        </div>
+      </div>
+      <div id="explainBody" aria-live="polite"></div>
+    </div>
+
+    <div class="empty-state" id="notFound" style="display:none;">Prescription not found.</div>
+  </main>
+</div>
+
+<script src="../../js/demo.js"></script>
+<script src="../../js/doctor/blockchain.js"></script>
+<script src="../../js/patient/prescription-view.js"></script>
+</body>
+</html>

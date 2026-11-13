@@ -1,0 +1,460 @@
+/* ==========================================================================
+   RxChain — Design Tokens
+   Concept: a prescription pad meets a notarized ledger. Warm paper surfaces,
+   ink-navy authority, a pharmacy-green accent for "prescribed", and a
+   wax-seal gold for "verified on chain". Signature element: the hash seal.
+   ========================================================================== */
+
+:root {
+  /* Color */
+  --ink: #10202B;          /* headings, nav, high-authority text */
+  --ink-soft: #24384533;   /* translucent ink for hairlines */
+  --paper: #EDE8DE;        /* page background, warm bone */
+  --paper-raised: #F7F4EC; /* card surfaces, slightly lighter */
+  --rx-green: #1F6F5C;     /* "prescribed / active" accent */
+  --rx-green-dark: #165645;
+  --seal-gold: #C08A2E;    /* "verified on chain" accent */
+  --seal-gold-dark: #9C6E20;
+  --alert: #B14B3D;        /* errors, revoked */
+  --text: #1B2A22;         /* body text on paper */
+  --text-muted: #5C665F;   /* captions, meta */
+  --line: #1B2A2224;       /* hairline rules */
+
+  /* Type */
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Layout */
+  --max-w: 1120px;
+  --radius: 4px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+img { max-width: 100%; display: block; }
+
+.wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  margin: 0 0 0.4em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+p { color: var(--text-muted); }
+
+:focus-visible {
+  outline: 2px solid var(--seal-gold);
+  outline-offset: 3px;
+}
+
+/* ---------------- Nav ---------------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--rx-green-dark);
+  transform: rotate(-6deg);
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.92rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+.nav-links a:hover { color: var(--ink); }
+
+.nav-cta {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-cta:hover { background: var(--rx-green-dark); }
+
+.nav-toggle { display: none; }
+
+/* ---------------- Hero ---------------- */
+.hero {
+  padding: 72px 0 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero .wrap {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rx-green-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.eyebrow::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rx-green);
+  display: inline-block;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  line-height: 1.06;
+  max-width: 12ch;
+}
+
+.hero .lede {
+  font-size: 1.08rem;
+  max-width: 46ch;
+  margin: 18px 0 30px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.btn-primary {
+  background: var(--rx-green);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--rx-green-dark); }
+
+.btn-ghost {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+/* --- The signature element: the notarized hash seal --- */
+.seal-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 30px 26px;
+  position: relative;
+  box-shadow: 0 18px 40px -24px rgba(16, 32, 43, 0.35);
+}
+
+.seal-card::before {
+  content: "Rx";
+  position: absolute;
+  top: -16px;
+  left: 24px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  padding: 5px 12px;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+.seal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.seal-row .label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 3px;
+}
+
+.seal-row .value { color: var(--ink); font-weight: 600; }
+
+.seal-stamp {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 2px solid var(--seal-gold);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  transform: rotate(-8deg);
+  flex-shrink: 0;
+  animation: seal-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: 400ms;
+}
+
+.seal-stamp span {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--seal-gold-dark);
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@keyframes seal-in {
+  from { opacity: 0; transform: rotate(-8deg) scale(0.6); }
+  to { opacity: 1; transform: rotate(-8deg) scale(1); }
+}
+
+.hash-line {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--rx-green-dark);
+  background: #1F6F5C0d;
+  border: 1px dashed #1F6F5C55;
+  border-radius: 4px;
+  padding: 10px 12px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hash-line .cursor {
+  display: inline-block;
+  width: 7px;
+  height: 12px;
+  background: var(--rx-green);
+  margin-left: 2px;
+  animation: blink 1s steps(1) infinite;
+  vertical-align: -2px;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+.perforation {
+  border: none;
+  border-top: 1.5px dashed var(--line);
+  margin: 22px 0;
+}
+
+/* ---------------- Ledger / How it works ---------------- */
+.section { padding: 74px 0; }
+.section-head { max-width: 60ch; margin-bottom: 44px; }
+.section-head .eyebrow { margin-bottom: 12px; }
+
+.ledger {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.ledger-step {
+  padding: 26px 22px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.ledger-step:last-child { border-right: none; }
+
+.ledger-step .num {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--seal-gold-dark);
+  display: block;
+  margin-bottom: 14px;
+}
+
+.ledger-step h3 {
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+
+.ledger-step p { font-size: 0.92rem; margin: 0; }
+
+/* ---------------- Role tabs ---------------- */
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.role-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 26px 22px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.role-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--rx-green);
+  box-shadow: 0 14px 28px -20px rgba(16, 32, 43, 0.4);
+}
+
+.role-tag {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.role-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
+.role-card p { font-size: 0.88rem; margin: 0 0 18px; }
+
+.role-go {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--rx-green-dark);
+  font-weight: 600;
+}
+
+/* ---------------- Trust strip ---------------- */
+.trust {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 56px 0;
+}
+
+.trust .wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.trust h3 {
+  color: var(--paper);
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+}
+
+.trust p { color: #C7CDC5; font-size: 0.9rem; margin: 0; }
+
+/* ---------------- Footer ---------------- */
+footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--line);
+}
+
+footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.foot-note {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 860px) {
+  .hero .wrap { grid-template-columns: 1fr; }
+  .ledger { grid-template-columns: 1fr 1fr; }
+  .roles-grid { grid-template-columns: 1fr 1fr; }
+  .trust .wrap { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .nav-links { display: none; }
+  .ledger { grid-template-columns: 1fr; }
+  .roles-grid { grid-template-columns: 1fr; }
+  .ledger-step { border-right: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seal-stamp, .hash-line .cursor { animation: none; }
+}
