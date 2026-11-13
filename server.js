@@ -84,7 +84,7 @@ app.use("/api", (req, res) => {
 
 // ---- Serve the frontend from the same origin ----
 // Only the public front-end folders/files are exposed, never rxchain-backend/ or .env
-const FRONT = path.join(__dirname, "..");
+const FRONT = __dirname;
 for (const dir of ["css", "js", "assets", "pages"]) {
   app.use("/" + dir, express.static(path.join(FRONT, dir), { maxAge: isProd ? "1h" : 0 }));
 }
